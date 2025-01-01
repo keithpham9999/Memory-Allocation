@@ -63,3 +63,22 @@ void *malloc(size_t size) {
     }
     return(block+1);
 }
+
+void free(void *ptr) {
+    if (!ptr) {
+        return;
+    }
+
+    block_meta *block_ptr = (block_meta*)ptr - 1;
+    block_ptr->free = 1;
+    // TODO: Coalesce free blocks here if possible.
+}
+
+int main() {
+    int *num = malloc(sizeof(int));
+    *num = 4;
+    printf("%d\n", *num);
+    free(num);
+    // Implement more complex allocation and deallocation scenarios here.
+    return 0;
+}
