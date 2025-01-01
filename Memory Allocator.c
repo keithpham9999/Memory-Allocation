@@ -36,3 +36,30 @@ block_meta *request_space(block_meta* last, size_t size) {
     block->free = 0;
     return block;
 }
+
+void *malloc(size_t size) {
+    block_meta *block;
+    if (size <= 0) {
+        return NULL;
+    }
+
+    if (!global_base) { // First call.
+        block = request_space(NULL, size);
+        if (!block) {
+            return NULL;
+        }
+        global_base = block;
+    } else {
+        block_meta *last = global_base;
+        block = find_free_block(&last, size);
+        if (!block) { // Failed to find free block.
+            block = request_space(last, size);
+            if (!block) {
+                return NULL;
+            }
+        } else { // Found free block
+            block->free = 0;
+        }
+    }
+    return(block+1);
+}
