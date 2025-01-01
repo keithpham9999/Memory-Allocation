@@ -20,3 +20,19 @@ block_meta *find_free_block(block_meta **last, size_t size) {
     }
     return current;
 }
+
+block_meta *request_space(block_meta* last, size_t size) {
+    block_meta *block = sbrk(0);
+    void *request = sbrk(size + sizeof(block_meta));
+    if (request == (void*) -1) {
+        return NULL; // sbrk failed.
+    }
+
+    if (last) { // NULL on first request.
+        last->next = block;
+    }
+    block->size = size;
+    block->next = NULL;
+    block->free = 0;
+    return block;
+}
