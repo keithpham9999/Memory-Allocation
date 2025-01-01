@@ -10,3 +10,13 @@ typedef struct block_meta {
     int free;
 } block_meta;
 
+block_meta *global_base = NULL;
+
+block_meta *find_free_block(block_meta **last, size_t size) {
+    block_meta *current = global_base;
+    while (current && !(current->free && current->size >= size)) {
+        *last = current;
+        current = current->next;
+    }
+    return current;
+}
